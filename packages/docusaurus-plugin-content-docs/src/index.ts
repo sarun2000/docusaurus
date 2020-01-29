@@ -41,7 +41,7 @@ import {
   SidebarItem,
   DocsSidebarItem,
 } from './types';
-import {Configuration} from 'webpack';
+import {Configuration, DefinePlugin} from 'webpack';
 import {docsVersion} from './version';
 
 const DEFAULT_OPTIONS: PluginOptions = {
@@ -390,6 +390,12 @@ export default function pluginContentDocs(
     configureWebpack(_config, isServer, utils) {
       const {getBabelLoader, getCacheLoader} = utils;
       const {rehypePlugins, remarkPlugins} = options;
+      const {
+        siteConfig: {
+          themeConfig: {prism: {additionalLanguages = []} = {}} = {},
+        } = {},
+      } = context;
+
       return {
         resolve: {
           alias: {
@@ -432,6 +438,11 @@ export default function pluginContentDocs(
             },
           ],
         },
+        plugins: [
+          new DefinePlugin({
+            PRISM_ADDITIONAL_LANGUAGES: JSON.stringify(additionalLanguages),
+          }),
+        ],
       } as Configuration;
     },
   };
