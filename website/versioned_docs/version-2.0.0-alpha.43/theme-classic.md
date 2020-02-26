@@ -45,7 +45,7 @@ module.exports = {
 
 ### Navbar Title & Logo
 
-You can add a logo and title to the navbar via `themeConfig.navbar`. Logo can be placed in [static folder](static-assets.md).
+You can add a logo and title to the navbar via `themeConfig.navbar`. Logo can be placed in [static folder](static-assets.md). Logo URL is set to base URL of your site by default. Although you can specify your own URL for the logo, if it is an external link, it will open in a new tab. You can also set a different logo for dark mode.
 
 ```js
 // docusaurus.config.js
@@ -57,6 +57,8 @@ module.exports = {
       logo: {
         alt: 'Site Logo',
         src: 'img/logo.svg',
+        srcDark: 'img/logo_dark.svg', // default to logo.src
+        href: 'https://v2.docusaurus.io/', // default to siteConfig.baseUrl
       },
     },
     ...
@@ -90,6 +92,23 @@ module.exports = {
 
 Outbound links automatically get `target="_blank" rel="noopener noreferrer"`.
 
+### Auto-hide sticky navbar
+
+You can enable this cool UI feature that automatically hides the navbar when a user starts scrolling down the page, and show it again when the user scrolls up.
+
+```js
+// docusaurus/config.js
+module.exports = {
+  ...
+  themeConfig: {
+    navbar: {
+      hideOnScroll: true,
+    },
+    ...
+  },
+}
+```
+
 ## Footer
 
 ## `CodeBlock`
@@ -98,18 +117,21 @@ Docusaurus uses [Prism React Renderer](https://github.com/FormidableLabs/prism-r
 
 ### Theme
 
-By default, we use [Palenight](https://github.com/FormidableLabs/prism-react-renderer/blob/master/src/themes/palenight.js) as syntax highlighting theme. You can specify a custom theme from the [list of available themes](https://github.com/FormidableLabs/prism-react-renderer#theming), e.g.:
+By default, we use [Palenight](https://github.com/FormidableLabs/prism-react-renderer/blob/master/src/themes/palenight.js) as syntax highlighting theme. You can specify a custom theme from the [list of available themes](https://github.com/FormidableLabs/prism-react-renderer/tree/master/src/themes). If you want to use a different syntax highlighting theme when the site is in dark mode, you may also do so.
 
-```js
+```js {5,6}
 // docusaurus/config.js
 module.exports = {
   themeConfig: {
     prism: {
-      theme: require('prism-react-renderer/themes/dracula'),
+      theme: require('prism-react-renderer/themes/github'),
+      darkTheme: require('prism-react-renderer/themes/dracula'),
     },
   },
 };
 ```
+
+**Note:** If you use the line highlighting Markdown syntax, you might need to specify a different highlight background color for the dark mode syntax highlighting theme. Refer to the [docs for guidance](markdown-features.mdx#line-highlighting).
 
 ### Default language
 

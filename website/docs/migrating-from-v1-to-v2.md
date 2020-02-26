@@ -519,9 +519,17 @@ For any questions, you can ask in the [`#docusaurus-1-to-2-migration` Discord ch
 
 ## Versioned Site
 
-> :warning: _This section is a work in progress._
+:::caution
 
-> ⚠️ Although we've implemented docs versioning since 2.0.0-alpha.37, we'd like to test it out for v2 users first before we recommend v1 users to migrate to v2. There are some changes in how v2 versioning works compared to v1. In the future, we might create a script to migrate your versioned docs easier. However, if you are adventurous enough to manually migrate, feel free to do so. Be warned though, the manual migration requires lot of work.
+_This section is a work in progress._
+
+:::
+
+:::warning
+
+Although we've implemented docs versioning since 2.0.0-alpha.37, we'd like to test it out for v2 users first before we recommend v1 users to migrate to v2. There are some changes in how v2 versioning works compared to v1. In the future, we might create a script to migrate your versioned docs easier. However, if you are adventurous enough to manually migrate, feel free to do so. Be warned though, the manual migration requires lot of work.
+
+:::
 
 ## Changes from v1
 
@@ -673,4 +681,22 @@ website
 ├── versioned_sidebars
 │   ├── version-1.1.0-sidebars.json
 │   └── version-1.0.0-sidebars.json
+```
+
+### Convert style attributes to style objects in MDX
+
+Docusaurus 2 uses JSX for doc files. If you have any style attributes in your Docusaurus 1 docs, convert them to style objects, like this:
+
+```diff
+---
+id: demo
+title: Demo
+---
+
+## Section
+
+hello world
+
+- pre style="background: black">zzz</pre>
++ pre style={{background: 'black'}}>zzz</pre>
 ```

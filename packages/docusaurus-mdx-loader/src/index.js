@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -46,12 +46,13 @@ module.exports = async function(fileString) {
 
   let exportStr = `export const frontMatter = ${stringifyObject(data)};`;
 
-  // Read metadata for this MDX and export it
+  // Read metadata for this MDX and export it.
   if (options.metadataPath && typeof options.metadataPath === 'function') {
     const metadataPath = options.metadataPath(this.resourcePath);
 
     if (metadataPath) {
-      // Add as dependency of this loader result so that we can recompile if metadata is changed
+      // Add as dependency of this loader result so that we can
+      // recompile if metadata is changed.
       this.addDependency(metadataPath);
       const metadata = await readFile(metadataPath, 'utf8');
       exportStr += `\nexport const metadata = ${metadata};`;

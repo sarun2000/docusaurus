@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -30,10 +30,10 @@ function ComponentCreator(path) {
   https://github.com/jamiebuilds/react-loadable#declaring-which-modules-are-being-loaded
   Example:
   - optsLoader:
-  {
-    component: () => import('./Pages.js'),
-    content.foo: () => import('./doc1.md'),
-  }
+    {
+      component: () => import('./Pages.js'),
+      content.foo: () => import('./doc1.md'),
+    }
   - optsModules: ['./Pages.js', './doc1.md']
   - optsWebpack: [require.resolveWeak('./Pages.js'), require.resolveWeak('./doc1.md')]
   */
@@ -55,7 +55,7 @@ function ComponentCreator(path) {
     modules: optsModules,
     webpack: () => optsWebpack,
     render: (loaded, props) => {
-      // clone the original object since we don't want to alter the original.
+      // Clone the original object since we don't want to alter the original.
       const loadedModules = JSON.parse(JSON.stringify(chunkNames));
       Object.keys(loaded).forEach(key => {
         let val = loadedModules;

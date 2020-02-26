@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,6 +13,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import DocPaginator from '@theme/DocPaginator';
 import useTOCHighlight from '@theme/hooks/useTOCHighlight';
 
+import classnames from 'classnames';
 import styles from './styles.module.css';
 
 const LINK_CLASS_NAME = 'contents__link';
@@ -32,7 +33,9 @@ function DocTOC({headings}) {
 
 /* eslint-disable jsx-a11y/control-has-associated-label */
 function Headings({headings, isChild}) {
-  if (!headings.length) return null;
+  if (!headings.length) {
+    return null;
+  }
   return (
     <ul className={isChild ? '' : 'contents contents__left-border'}>
       {headings.map(heading => (
@@ -51,7 +54,7 @@ function Headings({headings, isChild}) {
 
 function DocItem(props) {
   const {siteConfig = {}} = useDocusaurusContext();
-  const {url: siteUrl} = siteConfig;
+  const {url: siteUrl, title: siteTitle} = siteConfig;
   const {content: DocContent} = props;
   const {metadata} = DocContent;
   const {
@@ -77,7 +80,11 @@ function DocItem(props) {
   return (
     <>
       <Head>
-        {title && <title>{title}</title>}
+        {title && (
+          <title>
+            {title} | {siteTitle}
+          </title>
+        )}
         {description && <meta name="description" content={description} />}
         {description && (
           <meta property="og:description" content={description} />
@@ -95,7 +102,7 @@ function DocItem(props) {
       <div className="padding-vert--lg">
         <div className="container">
           <div className="row">
-            <div className="col">
+            <div className={classnames('col', styles.docItemCol)}>
               <div className={styles.docItemContainer}>
                 <article>
                   {version && (

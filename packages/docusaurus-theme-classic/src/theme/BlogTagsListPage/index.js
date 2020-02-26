@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -48,7 +48,7 @@ function BlogTagsListPage(props) {
     .filter(item => item != null);
 
   return (
-    <Layout title="Blog Tags" description="Blog Tags">
+    <Layout title="Tags" description="Blog Tags">
       <div className="container margin-vert--xl">
         <div className="row">
           <div className="col col--8 col--offset-2">

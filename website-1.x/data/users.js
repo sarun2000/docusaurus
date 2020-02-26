@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -323,6 +323,13 @@ module.exports = [
     pinned: false,
   },
   {
+    caption: 'Jafar',
+    image: 'https://yahoo.github.io/jafar/img/jafar.svg',
+    infoLink: 'https://yahoo.github.io/jafar',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
     caption: 'Jest',
     image: '/img/users/jest.png',
     infoLink: 'https://jestjs.io',
@@ -438,6 +445,13 @@ module.exports = [
     caption: 'Overwolf',
     image: '/img/users/overwolf.svg',
     infoLink: 'https://overwolf.github.io/',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
+    caption: 'Paubox',
+    image: '/img/users/paubox.png',
+    infoLink: 'https://docs.paubox.com/',
     fbOpenSource: false,
     pinned: false,
   },

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -20,8 +20,7 @@ function Layout(props) {
   const {siteConfig = {}} = useDocusaurusContext();
   const {
     favicon,
-    tagline,
-    title: defaultTitle,
+    title: siteTitle,
     themeConfig: {image: defaultImage},
     url: siteUrl,
   } = siteConfig;
@@ -35,7 +34,7 @@ function Layout(props) {
     permalink,
     version,
   } = props;
-  const metaTitle = title || `${defaultTitle} · ${tagline}`;
+  const metaTitle = title ? `${title} | ${siteTitle}` : siteTitle;
   const metaImage = image || defaultImage;
   const metaImageUrl = siteUrl + useBaseUrl(metaImage);
   const faviconUrl = useBaseUrl(favicon);

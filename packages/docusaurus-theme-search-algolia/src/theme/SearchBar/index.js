@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -22,7 +22,7 @@ const Search = props => {
   } = siteConfig;
   const history = useHistory();
 
-  function initAlgolia() {
+  function initAlgolia(focus) {
     window.docsearch({
       appId: algolia.appId,
       apiKey: algolia.apiKey,
@@ -33,12 +33,13 @@ const Search = props => {
       // navigation and avoiding a full page refresh.
       handleSelected: (_input, _event, suggestion) => {
         // Use an anchor tag to parse the absolute url into a relative url
-        // Alternatively, we can use new URL(suggestion.url) but its not supported in IE
+        // Alternatively, we can use new URL(suggestion.url) but it's not supported in IE.
         const a = document.createElement('a');
         a.href = suggestion.url;
 
-        // Algolia use closest parent element id #__docusaurus when a h1 page title does not have an id
-        // So, we can safely remove it. See https://github.com/facebook/docusaurus/issues/1828 for more details.
+        // Algolia use closest parent element id #__docusaurus when a h1 page title does
+        // not have an id, so we can safely remove it.
+        // See https://github.com/facebook/docusaurus/issues/1828 for more details.
         const routePath =
           `#__docusaurus` === a.hash
             ? `${a.pathname}`
@@ -47,11 +48,12 @@ const Search = props => {
       },
     });
 
-    // Needed because the search input loses focus after calling window.docsearch()
-    searchBarRef.current.focus();
+    if (focus) {
+      searchBarRef.current.focus();
+    }
   }
 
-  const loadAlgolia = () => {
+  const loadAlgolia = (focus = true) => {
     if (algoliaLoaded) {
       return;
     }
@@ -60,12 +62,12 @@ const Search = props => {
       ([{default: docsearch}]) => {
         setAlgoliaLoaded(true);
         window.docsearch = docsearch;
-        initAlgolia();
+        initAlgolia(focus);
       },
     );
   };
 
-  const toggleSearchIconClick = useCallback(() => {
+  const handleSearchIcon = useCallback(() => {
     loadAlgolia();
 
     if (algoliaLoaded) {
@@ -77,7 +79,13 @@ const Search = props => {
 
   const handleSearchInputBlur = useCallback(() => {
     props.handleSearchBarToggle(!props.isSearchBarExpanded);
-  }, [algoliaLoaded]);
+  }, [props.isSearchBarExpanded]);
+
+  const handleSearchInput = useCallback(e => {
+    const needFocus = e.type !== 'mouseover';
+
+    loadAlgolia(needFocus);
+  });
 
   return (
     <div className="navbar__search" key="search-box">
@@ -87,8 +95,8 @@ const Search = props => {
         className={classnames('search-icon', {
           'search-icon-hidden': props.isSearchBarExpanded,
         })}
-        onClick={toggleSearchIconClick}
-        onKeyDown={toggleSearchIconClick}
+        onClick={handleSearchIcon}
+        onKeyDown={handleSearchIcon}
         tabIndex={0}
       />
       <input
@@ -101,8 +109,8 @@ const Search = props => {
           {'search-bar-expanded': props.isSearchBarExpanded},
           {'search-bar': !props.isSearchBarExpanded},
         )}
-        onMouseOver={loadAlgolia}
-        onFocus={loadAlgolia}
+        onMouseOver={handleSearchInput}
+        onFocus={handleSearchInput}
         onBlur={handleSearchInputBlur}
         ref={searchBarRef}
       />

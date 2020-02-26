@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -57,6 +57,7 @@ describe('loadBlog', () => {
         permalink: noDatePermalink,
         title: 'no date',
       },
+      truncated: false,
     });
     expect(
       blogPosts.find(v => v.metadata.title === 'Happy 1st Birthday Slash!')
@@ -76,6 +77,7 @@ describe('loadBlog', () => {
         permalink: '/blog/2019/01/01/date-matter',
         title: 'date-matter',
       },
+      truncated: false,
     });
 
     expect(
@@ -91,6 +93,7 @@ describe('loadBlog', () => {
         permalink: '/blog/2019/01/01/date-matter',
         title: 'date-matter',
       },
+      truncated: false,
     });
   });
 });

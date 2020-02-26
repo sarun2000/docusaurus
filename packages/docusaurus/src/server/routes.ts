@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -54,7 +54,7 @@ export async function loadRoutes(
     [routePath: string]: ChunkNames;
   } = {};
 
-  // This is the higher level overview of route code generation
+  // This is the higher level overview of route code generation.
   function generateRouteCode(routeConfig: RouteConfig): string {
     const {
       path: routePath,
@@ -94,7 +94,7 @@ export async function loadRoutes(
       if (isModule(value)) {
         const modulePath = getModulePath(value);
         const chunkName = genChunkName(modulePath, prefix, name);
-        // We need to JSON.stringify so that if its on windows, backslash are escaped.
+        // We need to JSON.stringify so that if its on windows, backslashes are escaped.
         const loader = `() => import(/* webpackChunkName: '${chunkName}' */ ${JSON.stringify(
           modulePath,
         )})`;

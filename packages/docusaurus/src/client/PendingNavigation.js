@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -65,7 +65,9 @@ class PendingNavigation extends React.Component {
           } else {
             const id = hash.substring(1);
             const element = document.getElementById(id);
-            if (element) element.scrollIntoView();
+            if (element) {
+              element.scrollIntoView();
+            }
           }
         })
         .catch(e => console.warn(e));

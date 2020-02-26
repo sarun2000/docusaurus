@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -20,6 +20,7 @@ export function initPlugins({
     pluginConfigs.map(pluginItem => {
       let pluginModuleImport;
       let pluginOptions = {};
+
       if (!pluginItem) {
         return null;
       }
@@ -35,7 +36,8 @@ export function initPlugins({
         return null;
       }
 
-      // module is any valid module identifier - npm package or locally-resolved path.
+      // The pluginModuleImport value is any valid
+      // module identifier - npm package or locally-resolved path.
       const pluginModule: any = importFresh(pluginModuleImport);
       return (pluginModule.default || pluginModule)(context, pluginOptions);
     }),

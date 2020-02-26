@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -21,8 +21,10 @@ import useLockBodyScroll from '@theme/hooks/useLockBodyScroll';
 
 import styles from './styles.module.css';
 
-function NavLink({to, href, label, position, ...props}) {
+function NavLink({activeBasePath, to, href, label, position, ...props}) {
   const toUrl = useBaseUrl(to);
+  const activeBaseUrl = useBaseUrl(activeBasePath);
+
   return (
     <Link
       className="navbar__item navbar__link"
@@ -35,6 +37,12 @@ function NavLink({to, href, label, position, ...props}) {
         : {
             activeClassName: 'navbar__link--active',
             to: toUrl,
+            ...(activeBasePath
+              ? {
+                  isActive: (_match, location) =>
+                    location.pathname.startsWith(activeBaseUrl),
+                }
+              : null),
           })}
       {...props}>
       {label}
@@ -52,7 +60,7 @@ function Navbar() {
   const [sidebarShown, setSidebarShown] = useState(false);
   const [isSearchBarExpanded, setIsSearchBarExpanded] = useState(false);
 
-  const {theme, setTheme} = useThemeContext();
+  const {isDarkTheme, setLightTheme, setDarkTheme} = useThemeContext();
   const {navbarRef, isNavbarVisible} = useHideableNavbar(hideOnScroll);
 
   useLockBodyScroll(sidebarShown);
@@ -65,14 +73,21 @@ function Navbar() {
   }, [setSidebarShown]);
 
   const onToggleChange = useCallback(
-    e => {
-      const newTheme = e.target.checked ? 'dark' : '';
-      setTheme(newTheme);
-    },
-    [setTheme],
+    e => (e.target.checked ? setDarkTheme() : setLightTheme()),
+    [setLightTheme, setDarkTheme],
   );
 
-  const logoUrl = useBaseUrl(logo.src);
+  const logoLink = logo.href || baseUrl;
+  const isExternalLogoLink = /http/.test(logoLink);
+  const logoLinkProps = isExternalLogoLink
+    ? {
+        rel: 'noopener noreferrer',
+        target: '_blank',
+      }
+    : null;
+  const logoSrc = logo.srcDark && isDarkTheme ? logo.srcDark : logo.src;
+  const logoImageUrl = useBaseUrl(logoSrc);
+
   return (
     <nav
       ref={navbarRef}
@@ -107,9 +122,9 @@ function Navbar() {
               />
             </svg>
           </div>
-          <Link className="navbar__brand" to={baseUrl}>
+          <Link className="navbar__brand" to={logoLink} {...logoLinkProps}>
             {logo != null && (
-              <img className="navbar__logo" src={logoUrl} alt={logo.alt} />
+              <img className="navbar__logo" src={logoImageUrl} alt={logo.alt} />
             )}
             {title != null && (
               <strong
@@ -134,7 +149,7 @@ function Navbar() {
             <Toggle
               className={styles.displayOnlyInLargeViewport}
               aria-label="Dark mode toggle"
-              checked={theme === 'dark'}
+              checked={isDarkTheme}
               onChange={onToggleChange}
             />
           )}
@@ -151,16 +166,20 @@ function Navbar() {
       />
       <div className="navbar-sidebar">
         <div className="navbar-sidebar__brand">
-          <Link className="navbar__brand" onClick={hideSidebar} to={baseUrl}>
+          <Link
+            className="navbar__brand"
+            onClick={hideSidebar}
+            to={logoLink}
+            {...logoLinkProps}>
             {logo != null && (
-              <img className="navbar__logo" src={logoUrl} alt={logo.alt} />
+              <img className="navbar__logo" src={logoImageUrl} alt={logo.alt} />
             )}
             {title != null && <strong>{title}</strong>}
           </Link>
           {!disableDarkMode && sidebarShown && (
             <Toggle
               aria-label="Dark mode toggle in sidebar"
-              checked={theme === 'dark'}
+              checked={isDarkTheme}
               onChange={onToggleChange}
             />
           )}

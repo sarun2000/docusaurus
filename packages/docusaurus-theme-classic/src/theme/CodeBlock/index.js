@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -42,10 +42,10 @@ export default ({children, className: languageClassName, metastring}) => {
   const button = useRef(null);
   let highlightLines = [];
 
-  const {theme} = useThemeContext();
+  const {isDarkTheme} = useThemeContext();
   const lightModeTheme = prism.theme || defaultTheme;
   const darkModeTheme = prism.darkTheme || lightModeTheme;
-  const prismTheme = theme === 'dark' ? darkModeTheme : lightModeTheme;
+  const prismTheme = isDarkTheme ? darkModeTheme : lightModeTheme;
 
   if (metastring && highlightLinesRangeRegex.test(metastring)) {
     const highlightLinesRange = metastring.match(highlightLinesRangeRegex)[1];
@@ -90,12 +90,22 @@ export default ({children, className: languageClassName, metastring}) => {
       code={children.trim()}
       language={language}>
       {({className, style, tokens, getLineProps, getTokenProps}) => (
-        <div className={styles.codeBlockWrapper}>
-          <pre
-            ref={target}
-            className={classnames(className, styles.codeBlock)}
-            style={style}>
+        <pre className={classnames(className, styles.codeBlock)}>
+          <button
+            ref={button}
+            type="button"
+            aria-label="Copy code to clipboard"
+            className={styles.copyButton}
+            onClick={handleCopyCode}>
+            {showCopied ? 'Copied' : 'Copy'}
+          </button>
+
+          <code ref={target} className={styles.codeBlockLines} style={style}>
             {tokens.map((line, i) => {
+              if (line.length === 1 && line[0].content === '') {
+                line[0].content = '\n'; // eslint-disable-line no-param-reassign
+              }
+
               const lineProps = getLineProps({line, key: i});
 
               if (highlightLines.includes(i + 1)) {
@@ -110,16 +120,8 @@ export default ({children, className: languageClassName, metastring}) => {
                 </div>
               );
             })}
-          </pre>
-          <button
-            ref={button}
-            type="button"
-            aria-label="Copy code to clipboard"
-            className={styles.copyButton}
-            onClick={handleCopyCode}>
-            {showCopied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
+          </code>
+        </pre>
       )}
     </Highlight>
   );

@@ -16,7 +16,9 @@ Docusaurus 2 uses modern tooling to help you compose your interactive documentat
 
 In this section, we'd like to introduce you to the tools we've picked that we believe will help you build powerful documentation. Let us walk you through with an example.
 
-**Note:** All the following content assumes you are using `docusaurus-preset-classic`.
+:::important 
+All the following content assumes you are using `@docusaurus/preset-classic`.
+:::
 
 ---
 
@@ -128,7 +130,9 @@ image: https://i.imgur.com/mErPwqL.png
 
 Docusaurus has built-in support for [MDX](https://mdxjs.com), which allows you to write JSX within your Markdown files and render them as React components.
 
-**Note:** While both `.md` and `.mdx` files are parsed using MDX, some of the syntax are treated slightly differently. For the most accurate parsing and better editor support, we recommend using the `.mdx` extension for files containing MDX syntax. Let's rename the previous file to `greeting.mdx`
+**Note 1:** While both `.md` and `.mdx` files are parsed using MDX, some of the syntax are treated slightly differently. For the most accurate parsing and better editor support, we recommend using the `.mdx` extension for files containing MDX syntax. Let's rename the previous file to `greeting.mdx`.
+
+**Note 2:** Since all doc files are parsed using MDX, any HTML is treated as JSX. Therefore, if you need to inline-style a component, follow JSX flavor and provide style objects. This behavior is different from Docusaurus 1. See also [Migrating from v1 to v2](./migrating-from-v1-to-v2.md#convert-style-attributes-to-style-objects-in-mdx).
 
 Try this block here:
 
@@ -465,3 +469,20 @@ class HelloWorld {
 </Tabs>
 
 You may want to implement your own `<MultiLanguageCode />` abstraction if you find the above approach too verbose. We might just implement one in future for convenience.
+
+### Callouts/admonitions
+
+In addition to the basic Markdown syntax, we use [remark-admonitions](https://github.com/elviswolcott/remark-admonitions) alongside MDX to add support for admonitions.
+Admonitions are wrapped by a set of 3 colons.
+
+Example:
+
+  ```markdown
+  :::tip Title
+  The and title *can* include markdown.
+  :::
+  ```
+
+:::tip Title
+The content and title *can* include markdown.
+:::

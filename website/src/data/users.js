@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,6 +7,25 @@
 
 const users = [
   // Please add in alphabetical order of title.
+  {
+    title: 'Algolia Docsearch',
+    description:
+      'The best search experience for docs, integrates in minutes, for free',
+    preview: require('./showcase/algolia.png'),
+    website: 'https://docsearch.algolia.com/',
+    source: 'https://github.com/algolia/docsearch-website',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
+    title: 'Benthos',
+    description: 'A stream processor for mundane tasks',
+    preview: require('./showcase/benthos.png'),
+    website: 'https://benthos.dev/',
+    source: 'https://github.com/Jeffail/benthos',
+    fbOpenSource: false,
+    pinned: false,
+  },
   {
     title: 'Channel.js',
     description: 'The missing constructor for creating safe async iterators',

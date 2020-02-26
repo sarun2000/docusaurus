@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,12 +13,12 @@ import {PluginOptions, BlogPost, DateLink} from './types';
 import {parse, normalizeUrl, aliasedSitePath} from '@docusaurus/utils';
 import {LoadContext} from '@docusaurus/types';
 
-export function truncate(fileString: string, truncateMarker: RegExp | string) {
+export function truncate(fileString: string, truncateMarker: RegExp) {
   return fileString.split(truncateMarker, 1).shift()!;
 }
 
 // YYYY-MM-DD-{name}.mdx?
-// prefer named capture, but old Node version does not support.
+// Prefer named capture, but older Node versions do not support it.
 const FILENAME_PATTERN = /^(\d{4}-\d{1,2}-\d{1,2})-?(.*?).mdx?$/;
 
 function toUrl({date, link}: DateLink) {
@@ -85,7 +85,7 @@ export async function generateBlogPosts(
   {siteConfig, siteDir}: LoadContext,
   options: PluginOptions,
 ) {
-  const {include, routeBasePath} = options;
+  const {include, routeBasePath, truncateMarker} = options;
 
   if (!fs.existsSync(blogDir)) {
     return null;
@@ -105,21 +105,24 @@ export async function generateBlogPosts(
       const blogFileName = path.basename(relativeSource);
 
       const fileString = await fs.readFile(source, 'utf-8');
-      const {frontMatter, excerpt} = parse(fileString);
+      const {frontMatter, content, excerpt} = parse(fileString);
 
       let date;
       // Extract date and title from filename.
       const match = blogFileName.match(FILENAME_PATTERN);
       let linkName = blogFileName.replace(/\.mdx?$/, '');
+
       if (match) {
         const [, dateString, name] = match;
         date = new Date(dateString);
         linkName = name;
       }
+
       // Prefer user-defined date.
       if (frontMatter.date) {
         date = new Date(frontMatter.date);
       }
+
       // Use file create time for blog.
       date = date || (await fs.stat(source)).birthtime;
       frontMatter.title = frontMatter.title || linkName;
@@ -137,6 +140,7 @@ export async function generateBlogPosts(
           date,
           tags: frontMatter.tags,
           title: frontMatter.title,
+          truncated: truncateMarker?.test(content) || false,
         },
       });
     }),
