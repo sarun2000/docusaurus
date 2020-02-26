@@ -45,8 +45,9 @@ module.exports = function(context, options) {
   const {
     siteConfig: {themeConfig},
   } = context;
-  const {disableDarkMode = false} = themeConfig || {};
+  const {disableDarkMode = false} = themeConfig;
   const {customCss} = options || {};
+
   return {
     name: 'docusaurus-theme-classic',
 
@@ -55,7 +56,11 @@ module.exports = function(context, options) {
     },
 
     getClientModules() {
-      return ['infima/dist/css/default/default.css', customCss];
+      return [
+        'infima/dist/css/default/default.css',
+        customCss,
+        path.resolve(__dirname, './include-additional-languages'),
+      ];
     },
 
     injectHtmlTags() {
