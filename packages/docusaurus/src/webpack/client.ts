@@ -7,6 +7,7 @@
 import path from 'path';
 import {Configuration} from 'webpack';
 import merge from 'webpack-merge';
+import chalk from 'chalk';
 
 import {Props} from '@docusaurus/types';
 import {createBaseConfig} from './base';
@@ -30,6 +31,26 @@ export function createClientConfig(props: Props): Configuration {
       runtimeChunk: true,
     },
     plugins: [
+      // Plugin to force terminate building if errors happened in the client bundle
+      {
+        apply: compiler => {
+          compiler.hooks.done.tap('client:done', stats => {
+            if (stats.hasErrors()) {
+              console.log(
+                chalk.red(
+                  'Client bundle compiled with errors therefore further build is impossible.',
+                ),
+              );
+
+              stats.toJson('errors-only').errors.forEach(e => {
+                console.error(e);
+              });
+
+              process.exit(1);
+            }
+          });
+        },
+      },
       new ChunkAssetPlugin(),
       // Show compilation progress bar and build time.
       new LogPlugin({
