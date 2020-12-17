@@ -23,10 +23,13 @@ function hasYarn(): boolean {
 }
 
 function isValidGitRepoUrl(gitRepoUrl: string): boolean {
-  return ['https://', 'git@'].some(item => gitRepoUrl.startsWith(item));
+  return ['https://', 'git@'].some((item) => gitRepoUrl.startsWith(item));
 }
 
-async function updatePkg(pkgPath: string, obj: any): Promise<void> {
+async function updatePkg(
+  pkgPath: string,
+  obj: Record<string, unknown>,
+): Promise<void> {
   const content = await fs.readFile(pkgPath, 'utf-8');
   const pkg = JSON.parse(content);
   const newPkg = Object.assign(pkg, obj);
@@ -34,16 +37,19 @@ async function updatePkg(pkgPath: string, obj: any): Promise<void> {
   await fs.outputFile(pkgPath, JSON.stringify(newPkg, null, 2));
 }
 
-export async function init(
+export default async function init(
   rootDir: string,
   siteName?: string,
   reqTemplate?: string,
+  cliOptions: Partial<{
+    useNpm: boolean;
+  }> = {},
 ): Promise<void> {
-  const useYarn = hasYarn();
+  const useYarn = !cliOptions.useNpm ? hasYarn() : false;
   const templatesDir = path.resolve(__dirname, '../templates');
   const templates = fs
     .readdirSync(templatesDir)
-    .filter(d => !d.startsWith('.') && !d.startsWith('README'));
+    .filter((d) => !d.startsWith('.') && !d.startsWith('README'));
 
   const gitChoice = 'Git repository';
   const templateChoices = [...templates, gitChoice];

@@ -15,7 +15,13 @@ import {createBaseConfig} from './base';
 import WaitPlugin from './plugins/WaitPlugin';
 import LogPlugin from './plugins/LogPlugin';
 
-export function createServerConfig(props: Props): Configuration {
+export default function createServerConfig({
+  props,
+  onLinksCollected = () => {},
+}: {
+  props: Props;
+  onLinksCollected?: (staticPagePath: string, links: string[]) => void;
+}): Configuration {
   const {
     baseUrl,
     routesPaths,
@@ -23,12 +29,14 @@ export function createServerConfig(props: Props): Configuration {
     headTags,
     preBodyTags,
     postBodyTags,
+    ssrTemplate,
+    siteConfig: {noIndex},
   } = props;
   const config = createBaseConfig(props, true);
 
   const routesLocation = {};
   // Array of paths to be rendered. Relative to output directory
-  const ssgPaths = routesPaths.map(str => {
+  const ssgPaths = routesPaths.map((str) => {
     const ssgPath =
       baseUrl === '/' ? str : str.replace(new RegExp(`^${baseUrl}`), '/');
     routesLocation[ssgPath] = str;
@@ -61,6 +69,9 @@ export function createServerConfig(props: Props): Configuration {
           headTags,
           preBodyTags,
           postBodyTags,
+          onLinksCollected,
+          ssrTemplate,
+          noIndex,
         },
         paths: ssgPaths,
       }),

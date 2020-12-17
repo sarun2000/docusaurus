@@ -12,6 +12,8 @@ module.exports = {
   tagline: 'The tagline of my site',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'facebook', // Usually your GitHub org/user name.
   projectName: 'docusaurus', // Usually your repo name.
@@ -22,9 +24,9 @@ module.exports = {
         alt: 'My Facebook Project Logo',
         src: 'img/logo.svg',
       },
-      links: [
+      items: [
         {
-          to: 'docs/doc1',
+          to: 'docs/',
           activeBasePath: 'docs',
           label: 'Docs',
           position: 'left',
@@ -42,11 +44,11 @@ module.exports = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Learn',
           items: [
             {
               label: 'Style Guide',
-              to: 'docs/doc1',
+              to: 'docs/',
             },
             {
               label: 'Second Doc',
@@ -62,13 +64,17 @@ module.exports = {
               href: 'https://stackoverflow.com/questions/tagged/docusaurus',
             },
             {
+              label: 'Twitter',
+              href: 'https://twitter.com/docusaurus',
+            },
+            {
               label: 'Discord',
               href: 'https://discordapp.com/invite/docusaurus',
             },
           ],
         },
         {
-          title: 'Social',
+          title: 'More',
           items: [
             {
               label: 'Blog',
@@ -78,9 +84,19 @@ module.exports = {
               label: 'GitHub',
               href: 'https://github.com/facebook/docusaurus',
             },
+          ],
+        },
+        {
+          title: 'Legal',
+          // Please do not remove the privacy and terms, it's a legal requirement.
+          items: [
             {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'Privacy',
+              href: 'https://opensource.facebook.com/legal/privacy/',
+            },
+            {
+              label: 'Terms',
+              href: 'https://opensource.facebook.com/legal/terms/',
             },
           ],
         },
@@ -88,7 +104,7 @@ module.exports = {
       logo: {
         alt: 'Facebook Open Source Logo',
         src: 'img/oss_logo.png',
-        href: 'https://opensource.facebook.com/',
+        href: 'https://opensource.facebook.com',
       },
       // Please do not remove the credits, help to publicize Docusaurus :)
       copyright: `Copyright © ${new Date().getFullYear()} Facebook, Inc. Built with Docusaurus.`,
@@ -100,8 +116,15 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
+          // Please change this to your repo.
           editUrl:
             'https://github.com/facebook/docusaurus/edit/master/website/',
+        },
+        blog: {
+          showReadingTime: true,
+          // Please change this to your repo.
+          editUrl:
+            'https://github.com/facebook/docusaurus/edit/master/website/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

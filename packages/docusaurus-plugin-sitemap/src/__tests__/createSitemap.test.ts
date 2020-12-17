@@ -19,6 +19,7 @@ describe('createSitemap', () => {
         cacheTime: 600,
         changefreq: 'daily',
         priority: 0.7,
+        trailingSlash: false,
       },
     );
     expect(sitemap.toString()).toContain(
@@ -28,9 +29,47 @@ describe('createSitemap', () => {
 
   test('empty site', () => {
     expect(() => {
-      createSitemap({} as any, [], {} as any);
+      createSitemap({} as DocusaurusConfig, [], {});
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Url in docusaurus.config.js cannot be empty/undefined"`,
+      `"url in docusaurus.config.js cannot be empty/undefined"`,
+    );
+  });
+
+  test('exclusion of 404 page', () => {
+    const sitemap = createSitemap(
+      {
+        url: 'https://example.com',
+      } as DocusaurusConfig,
+      ['/', '/404.html', '/mypage'],
+      {
+        cacheTime: 600,
+        changefreq: 'daily',
+        priority: 0.7,
+        trailingSlash: false,
+      },
+    );
+    expect(sitemap.toString()).not.toContain('404');
+  });
+
+  test('add trailing slash', () => {
+    const sitemap = createSitemap(
+      {
+        url: 'https://example.com',
+      } as DocusaurusConfig,
+      ['/', '/test'],
+      {
+        cacheTime: 600,
+        changefreq: 'daily',
+        priority: 0.7,
+        trailingSlash: true,
+      },
+    );
+
+    expect(sitemap.toString()).toContain(
+      '<loc>https://example.com/test/</loc>',
+    );
+    expect(sitemap.toString()).not.toContain(
+      '<loc>https://example.com/test</loc>',
     );
   });
 });

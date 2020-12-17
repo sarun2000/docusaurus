@@ -12,13 +12,15 @@ const siteConfig = {
   title: 'Docusaurus',
   tagline: 'Easy to Maintain Open Source Documentation Websites',
   url: 'https://docusaurus.io',
-  baseUrl: '/',
+  baseUrl: process.env.BASE_URL || '/',
   organizationName: 'facebook',
   projectName: 'docusaurus',
   cname: 'docusaurus.io',
   noIndex: false,
   users,
-  editUrl: 'https://github.com/facebook/docusaurus/edit/master/docs/',
+  customDocsPath: 'website-1.x/docs',
+  editUrl:
+    'https://github.com/facebook/docusaurus/edit/master/website-1.x/docs/',
   headerLinks: [
     {doc: 'installation', label: 'Docs'},
     {doc: 'tutorial-setup', label: 'Tutorial'},
@@ -27,6 +29,7 @@ const siteConfig = {
     {
       href: 'https://github.com/facebook/docusaurus',
       label: 'GitHub',
+      external: true,
     },
   ],
   headerIcon: 'img/docusaurus.svg',

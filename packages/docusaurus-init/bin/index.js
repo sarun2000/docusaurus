@@ -11,7 +11,7 @@ const chalk = require('chalk');
 const semver = require('semver');
 const path = require('path');
 const program = require('commander');
-const {init} = require('../lib');
+const {default: init} = require('../lib');
 const requiredVersion = require('../package.json').engines.node;
 
 if (!semver.satisfies(process.version, requiredVersion)) {
@@ -26,7 +26,7 @@ if (!semver.satisfies(process.version, requiredVersion)) {
 
 function wrapCommand(fn) {
   return (...args) =>
-    fn(...args).catch(err => {
+    fn(...args).catch((err) => {
       console.error(chalk.red(err.stack));
       process.exitCode = 1;
     });
@@ -38,12 +38,13 @@ program
 
 program
   .command('init [siteName] [template] [rootDir]')
+  .option('--use-npm')
   .description('Initialize website')
-  .action((siteName, template, rootDir = '.') => {
-    wrapCommand(init)(path.resolve(rootDir), siteName, template);
+  .action((siteName, template, rootDir = '.', {useNpm}) => {
+    wrapCommand(init)(path.resolve(rootDir), siteName, template, {useNpm});
   });
 
-program.arguments('<command>').action(cmd => {
+program.arguments('<command>').action((cmd) => {
   program.outputHelp();
   console.log(`  ${chalk.red(`\n  Unknown command ${chalk.yellow(cmd)}.`)}`);
   console.log();

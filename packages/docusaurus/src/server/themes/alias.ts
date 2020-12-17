@@ -10,25 +10,45 @@ import fs from 'fs-extra';
 import path from 'path';
 import {fileToPath, posixPath, normalizeUrl} from '@docusaurus/utils';
 import {ThemeAlias} from '@docusaurus/types';
+import {sortBy} from 'lodash';
 
-export function themeAlias(themePath: string): ThemeAlias {
+export default function themeAlias(
+  themePath: string,
+  addOriginalAlias: boolean,
+): ThemeAlias {
   if (!fs.pathExistsSync(themePath)) {
     return {};
   }
 
-  const themeComponentFiles = globby.sync(['**/*.{js,jsx}'], {
+  const themeComponentFiles = globby.sync(['**/*.{js,jsx,ts,tsx}'], {
     cwd: themePath,
   });
 
-  const alias: ThemeAlias = {};
-  themeComponentFiles.forEach(relativeSource => {
+  // See https://github.com/facebook/docusaurus/pull/3922
+  // ensure @theme/NavbarItem alias is created after @theme/NavbarItem/LocaleDropdown
+  const sortedThemeComponentFiles = sortBy(themeComponentFiles, (file) =>
+    file.endsWith('/index.js'),
+  );
+
+  const aliases: ThemeAlias = {};
+
+  sortedThemeComponentFiles.forEach((relativeSource) => {
     const filePath = path.join(themePath, relativeSource);
     const fileName = fileToPath(relativeSource);
+
     const aliasName = posixPath(
       normalizeUrl(['@theme', fileName]).replace(/\/$/, ''),
     );
-    alias[aliasName] = filePath;
+    aliases[aliasName] = filePath;
+
+    if (addOriginalAlias) {
+      // For swizzled components to access the original.
+      const originalAliasName = posixPath(
+        normalizeUrl(['@theme-original', fileName]).replace(/\/$/, ''),
+      );
+      aliases[originalAliasName] = filePath;
+    }
   });
 
-  return alias;
+  return aliases;
 }

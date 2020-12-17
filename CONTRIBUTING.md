@@ -1,6 +1,6 @@
 # Contributing to Docusaurus
 
-[Docusaurus](https://docusaurus.io) is our way to hopefully help creating open source documentation easier. We currently have [multiple open source projects using it](https://docusaurus.io/en/users.html), with many more planned. If you're interested in contributing to Docusaurus, hopefully this document makes the process for contributing clear.
+[Docusaurus](https://docusaurus.io) is our way to hopefully help to create open source documentation easier. We currently have [multiple open source projects using it](https://docusaurus.io/en/users.html), with many more planned. If you're interested in contributing to Docusaurus, hopefully, this document makes the process for contributing clear.
 
 The [Open Source Guides](https://opensource.guide/) website has a collection of resources for individuals, communities, and companies who want to learn how to run and contribute to an open source project. Contributors and people new to open source alike will find the following guides especially useful:
 
@@ -32,11 +32,13 @@ If you only want to make content changes you just need to know about versioned d
 
 To make a fix to the published versions you must edit the corresponding markdown file in both folders. If you only made changes in `docs`, be sure to be viewing the `next` version to see the updates (ensure there's `next` in the URL).
 
+> Do not edit the auto-generated files within `versioned_docs/` or `versioned_sidebars/` unless you are sure it is necessary. For example, information about new features should not be documented in versioned docs. Edits made to older versions will not be propagated to newer versions of the docs.
+
 ### Join our Discord Channel
 
 We have `#docusaurus-dev` on [Discord](https://discord.gg/docusaurus) to discuss all things Docusaurus development.
 
-To participate in Docusaurus 2 dev, we have the [`#docusaurus-2-dev`](https://discord.gg/9wrnhY) channel.
+To participate in Docusaurus 2 dev, we have the [`#docusaurus-2-dev`](https://discord.gg/n8nQEAS) channel.
 
 ### Triaging Issues and Pull Requests
 
@@ -63,7 +65,7 @@ Docusaurus has two primary branches: `master` and `gh-pages`.
 
 ## Bugs
 
-We use [GitHub Issues](https://github.com/facebook/docusaurus/issues) for our public bugs. If you would like to report a problem, take a look around and see if someone already opened an issue about it. If you a are certain this is a new, unreported bug, you can submit a [bug report](#reporting-new-issues).
+We use [GitHub Issues](https://github.com/facebook/docusaurus/issues) for our public bugs. If you would like to report a problem, take a look around and see if someone already opened an issue about it. If you are certain this is a new, unreported bug, you can submit a [bug report](#reporting-new-issues).
 
 If you have questions about using Docusaurus, contact the Docusaurus Twitter account at [@docusaurus](https://twitter.com/docusaurus), and we will do our best to answer your questions.
 
@@ -89,6 +91,18 @@ Facebook has a [bounty program](https://www.facebook.com/whitehat/) for the safe
    - For Docusaurus 1 development, run `yarn start:v1`
    - For Docusaurus 2 development, run `yarn start`
 
+## Online one-click setup for contributing
+
+You can use Gitpod (a free, online, VS Code-like IDE) for contributing. With a single click it will launch a workspace (for Docusaurus 2) and automatically:
+
+- clone the docusaurus repo.
+- install the dependencies.
+- run `yarn run start`
+
+So that you can start contributing straight away.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/facebook/docusaurus)
+
 ## Pull Requests
 
 ### Your First Pull Request
@@ -103,11 +117,11 @@ We have a list of [beginner friendly issues](https://github.com/facebook/docusau
 
 ### Proposing a Change
 
-If you would like to request a new feature or enhancement but are not yet thinking about opening a pull request, you can also file an issue with [feature template](https://github.com/facebook/docusaurus/issues/new?template=feature.md).
+If you would like to request a new feature or enhancement but are not yet thinking about opening a pull request, you can also file an issue with the [feature template](https://github.com/facebook/docusaurus/issues/new?template=feature.md).
 
-If you intend to change the public API (e.g., something in `siteConfig.js`), or make any non-trivial changes to the implementation, we recommend filing an issue with [proposal template](https://github.com/facebook/docusaurus/issues/new?template=proposal.md) and including `[Proposal]` in the title. This lets us reach an agreement on your proposal before you put significant effort into it. These types of issues should be rare.
+If you intend to change the public API (e.g., something in `siteConfig.js`) or make any non-trivial changes to the implementation, we recommend filing an issue with the [proposal template](https://github.com/facebook/docusaurus/issues/new?template=proposal.md) and including `[Proposal]` in the title. This lets us reach an agreement on your proposal before you put significant effort into it. These types of issues should be rare.
 
-If you're only fixing a bug, it's fine to submit a pull request right away but we still recommend to file an issue detailing what you're fixing. This is helpful in case we don't accept that specific fix but want to keep track of the issue.
+If you're only fixing a bug, it's fine to submit a pull request right away but we still recommend filing an issue detailing what you're fixing. This is helpful in case we don't accept that specific fix but want to keep track of the issue.
 
 ### Sending a Pull Request
 
@@ -130,6 +144,8 @@ A good test plan has the exact commands you ran and their output, provides scree
 
 - If you've changed APIs, update the documentation.
 
+If you need help testing your changes locally, you can check out the doc on doing [local third party testing](./admin/local-third-party-project-testing.md).
+
 #### Breaking Changes
 
 When adding a new breaking change, follow this template in your pull request:
@@ -149,7 +165,7 @@ Copy and paste this to the top of your new file(s):
 
 ```js
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.

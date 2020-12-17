@@ -18,7 +18,7 @@ class Users extends React.Component {
       return null;
     }
 
-    const showcase = siteConfig.users.map(user => (
+    const showcase = siteConfig.users.map((user) => (
       <a href={user.infoLink} key={user.infoLink}>
         <img src={user.image} alt={user.caption} title={user.caption} />
       </a>
@@ -34,14 +34,14 @@ class Users extends React.Component {
             </div>
             <div className="logos">{showcase}</div>
             {siteConfig.repoUrl && (
-              <>
+              <React.Fragment>
                 <p>Are you using this project?</p>
                 <a
                   href={`${siteConfig.repoUrl}/edit/master/website/siteConfig.js`}
                   className="button">
                   Add your company
                 </a>
-              </>
+              </React.Fragment>
             )}
           </div>
         </Container>

@@ -5,8 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import _ from 'lodash';
-import {htmlTagObjectToString} from './htmlTags';
+import htmlTagObjectToString from './htmlTags';
 import {
   Plugin,
   InjectedHtmlTags,
@@ -19,10 +18,10 @@ function toString(val: string | HtmlTagObject): string {
 }
 
 export function createHtmlTagsString(tags: HtmlTags): string {
-  return _.isArray(tags) ? tags.map(toString).join('\n') : toString(tags);
+  return Array.isArray(tags) ? tags.map(toString).join('\n') : toString(tags);
 }
 
-export function loadHtmlTags(plugins: Plugin<any>[]): InjectedHtmlTags {
+export function loadHtmlTags(plugins: Plugin<unknown>[]): InjectedHtmlTags {
   const htmlTags = plugins.reduce(
     (acc, plugin) => {
       if (!plugin.injectHtmlTags) {
@@ -32,13 +31,13 @@ export function loadHtmlTags(plugins: Plugin<any>[]): InjectedHtmlTags {
         plugin.injectHtmlTags() || {};
       return {
         headTags: headTags
-          ? acc.headTags + '\n' + createHtmlTagsString(headTags)
+          ? `${acc.headTags}\n${createHtmlTagsString(headTags)}`
           : acc.headTags,
         preBodyTags: preBodyTags
-          ? acc.preBodyTags + '\n' + createHtmlTagsString(preBodyTags)
+          ? `${acc.preBodyTags}\n${createHtmlTagsString(preBodyTags)}`
           : acc.preBodyTags,
         postBodyTags: postBodyTags
-          ? acc.postBodyTags + '\n' + createHtmlTagsString(postBodyTags)
+          ? `${acc.postBodyTags}\n${createHtmlTagsString(postBodyTags)}`
           : acc.postBodyTags,
       };
     },

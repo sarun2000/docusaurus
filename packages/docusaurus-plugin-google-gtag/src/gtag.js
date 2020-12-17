@@ -8,7 +8,7 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 import siteConfig from '@generated/docusaurus.config';
 
-export default (function() {
+export default (function () {
   if (!ExecutionEnvironment.canUseDOM) {
     return null;
   }
@@ -23,6 +23,12 @@ export default (function() {
     onRouteUpdate({location}) {
       // Always refer to the variable on window in-case it gets overridden elsewhere.
       window.gtag('config', trackingID, {
+        page_path: location.pathname,
+        page_title: document.title,
+      });
+      window.gtag('event', 'page_view', {
+        page_title: document.title,
+        page_location: location.href,
         page_path: location.pathname,
       });
     },

@@ -10,7 +10,7 @@
 }
 
 .sectionAlt {
-  background-color: var(--ifm-color-emphasis-inverse-alpha-30);
+  background-color: var(--ifm-color-emphasis-100);
 }
 
 .sectionInner {
@@ -21,6 +21,11 @@
   max-width: 60%;
   max-height: 128px;
   margin: 0 auto;
+}
+
+.featureHeading {
+  font-size: var(--ifm-h3-font-size);
+  padding-top: 1rem;
 }
 
 .announcement {
@@ -58,9 +63,10 @@
   margin: 0;
 }
 
-.heroProjectKeywords {
+.heroTitleTextHtml b {
   color: var(--ifm-color-primary);
 }
+
 
 @keyframes jackInTheBox {
   from {
@@ -88,7 +94,7 @@
   animation-name: jackInTheBox;
   float: right;
   margin-top: 20px;
-  padding: 20px;
+  padding: 0 20px 20px;
 }
 
 .indexCtas {
@@ -98,14 +104,12 @@
 }
 
 .indexCtasGetStartedButton {
-  border: 1px solid var(--ifm-color-primary);
-  display: inline-block;
+  border: 2px solid var(--ifm-color-primary);
   line-height: 1.2em;
   text-decoration: none !important;
   text-transform: uppercase;
   transition: background 0.3s, color 0.3s;
   border-radius: 8px;
-  border-width: 2px;
   color: #fff;
   font-size: 24px;
   font-weight: bold;

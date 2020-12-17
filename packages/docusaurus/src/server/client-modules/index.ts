@@ -5,19 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import _ from 'lodash';
 import {Plugin} from '@docusaurus/types';
 
-export function loadClientModules(plugins: Plugin<any>[]): string[] {
-  return _.compact(
-    _.flatten<string | null>(
-      plugins.map(plugin => {
-        if (!plugin.getClientModules) {
-          return null;
-        }
-
-        return plugin.getClientModules();
-      }),
-    ),
+export default function loadClientModules(
+  plugins: Plugin<unknown>[],
+): string[] {
+  return ([] as string[]).concat(
+    ...plugins
+      .map((plugin) => plugin.getClientModules?.() ?? [])
+      .filter(Boolean),
   );
 }

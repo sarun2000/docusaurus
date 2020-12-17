@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-module.exports = [
+const users = [
   // Please add your logo in alphabetical order of caption.
   {
     caption: '1Hive',
@@ -51,21 +51,21 @@ module.exports = [
   },
   {
     caption: 'Amphora Data',
-    image: '/img/users/AmphoraData.png',
+    image: '/img/users/amphora-data.png',
     infoLink: 'https://amphoradata.github.io/',
     fbOpenSource: false,
     pinned: false,
   },
   {
     caption: 'Anssr Data Platform',
-    image: '/img/users/anssr.svg',
+    image: '/img/users/anssr-data-plataform.svg',
     infoLink: 'https://anssr.io/',
     fbOpenSource: false,
     pinned: false,
   },
   {
     caption: 'Apify SDK',
-    image: '/img/users/apify.svg',
+    image: '/img/users/apify-skd.svg',
     infoLink: 'https://sdk.apify.com/',
     fbOpenSource: false,
     pinned: false,
@@ -134,6 +134,13 @@ module.exports = [
     pinned: false,
   },
   {
+    caption: 'Casbin',
+    image: '/img/users/casbin.png',
+    infoLink: 'https://casbin.org/',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
     caption: 'Channelize.io',
     image: '/img/users/channelize.png',
     infoLink: 'https://docs.channelize.io/',
@@ -174,6 +181,13 @@ module.exports = [
     infoLink: 'https://facebook.github.io/create-react-app/',
     fbOpenSource: true,
     pinned: true,
+  },
+  {
+    caption: 'Day.js',
+    image: '/img/users/dayjs.png',
+    infoLink: 'https://day.js.org/',
+    fbOpenSource: false,
+    pinned: false,
   },
   {
     caption: 'Dep',
@@ -267,15 +281,22 @@ module.exports = [
     pinned: false,
   },
   {
+    caption: 'Global CTO Forum',
+    image: '/img/users/global-cto-forum.svg',
+    infoLink: 'https://globalctoforum.org/',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
     caption: 'Goby',
-    image: 'https://goby-lang.org/img/goby-logo.svg',
+    image: '/img/users/goby-logo.svg',
     infoLink: 'https://goby-lang.org',
     fbOpenSource: false,
     pinned: false,
   },
   {
     caption: 'graphql-compose',
-    image: 'https://graphql-compose.github.io/svg/graphql-compose-logo.svg',
+    image: '/img/users/graphql-compose-logo.svg',
     infoLink: 'https://graphql-compose.github.io',
     fbOpenSource: false,
     pinned: false,
@@ -295,6 +316,13 @@ module.exports = [
     pinned: false,
   },
   {
+    caption: 'Hazelcast Jet',
+    image: '/img/users/hazelcast-jet.svg',
+    infoLink: 'https://jet-start.sh',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
     caption: 'Hemera',
     image: '/img/users/hemera.png',
     infoLink: 'https://hemerajs.github.io/hemera/',
@@ -303,7 +331,7 @@ module.exports = [
   },
   {
     caption: 'Home Assistant',
-    image: 'https://developers.home-assistant.io/img/logo-responsive.svg',
+    image: '/img/users/home-assistant.svg',
     infoLink: 'https://developers.home-assistant.io/',
     fbOpenSource: false,
     pinned: false,
@@ -324,7 +352,7 @@ module.exports = [
   },
   {
     caption: 'Jafar',
-    image: 'https://yahoo.github.io/jafar/img/jafar.svg',
+    image: '/img/users/jafar.svg',
     infoLink: 'https://yahoo.github.io/jafar',
     fbOpenSource: false,
     pinned: false,
@@ -351,6 +379,13 @@ module.exports = [
     pinned: true,
   },
   {
+    caption: 'LisanJS',
+    image: '/img/users/lisan.svg',
+    infoLink: 'https://lisanjs.com',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
     caption: 'MakeItOpen',
     image: '/img/users/makeitopen.png',
     infoLink: 'https://makeitopen.com/',
@@ -363,6 +398,13 @@ module.exports = [
     infoLink: 'https://mailgo.js.org/',
     fbOpenSource: false,
     pinned: true,
+  },
+  {
+    caption: 'manylesson',
+    image: '/img/users/manylesson.png',
+    infoLink: 'http://www.manylesson.com/',
+    fbOpenSource: false,
+    pinned: false,
   },
   {
     caption: 'Metro',
@@ -422,7 +464,7 @@ module.exports = [
   },
   {
     caption: 'Node SerialPort',
-    image: 'https://serialport.io/img/serialport-logo.svg',
+    image: '/img/users/serialport-logo.svg',
     infoLink: 'https://serialport.io',
     fbOpenSource: false,
     pinned: false,
@@ -436,7 +478,7 @@ module.exports = [
   },
   {
     caption: 'Open Power Quality',
-    image: 'https://openpowerquality.org/img/opqlogo.png',
+    image: '/img/users/open-power-quality.png',
     infoLink: 'https://openpowerquality.org/',
     fbOpenSource: false,
     pinned: false,
@@ -478,15 +520,15 @@ module.exports = [
   },
   {
     caption: 'pnpm',
-    image: 'https://pnpm.js.org/img/pnpm.svg',
+    image: '/img/users/pnpm.svg',
     infoLink: 'https://pnpm.js.org/',
     fbOpenSource: false,
     pinned: false,
   },
   {
     caption: 'Polymath Network',
-    image: 'https://developers.polymath.network/img/text.svg',
-    infoLink: 'https://developers.polymath.network',
+    image: '/img/users/polymatch-network.png',
+    infoLink: 'https://polymath.network',
     fbOpenSource: false,
     pinned: false,
   },
@@ -522,6 +564,20 @@ module.exports = [
     caption: 'Quix',
     image: '/img/users/quix.png',
     infoLink: 'https://wix.github.io/quix/',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
+    caption: 'Quicksi',
+    image: '/img/users/quicksi.png',
+    infoLink: 'https://quicksi-bot.now.sh/',
+    fbOpenSource: false,
+    pinned: false,
+  },
+  {
+    caption: 'Radity',
+    image: '/img/users/radity.svg',
+    infoLink: 'https://radity.com/',
     fbOpenSource: false,
     pinned: false,
   },
@@ -653,7 +709,7 @@ module.exports = [
   },
   {
     caption: 'rest-hapi',
-    image: 'https://jkheadley.github.io/rest-hapi/img/rest-hapi-logo-alt.png',
+    image: '/img/users/rest-hapi.png',
     infoLink: 'https://jkheadley.github.io/rest-hapi/',
     fbOpenSource: false,
     pinned: false,
@@ -688,7 +744,7 @@ module.exports = [
   },
   {
     caption: 'single-spa',
-    image: 'https://single-spa.js.org/img/logo-white-bgblue.svg',
+    image: '/img/users/single-spa.svg',
     infoLink: 'https://single-spa.js.org/',
     fbOpenSource: false,
     pinned: false,
@@ -702,7 +758,7 @@ module.exports = [
   },
   {
     caption: 'smash.gg',
-    image: 'https://imgur.com/eBFBDei.png',
+    image: '/img/users/smash.png',
     infoLink: 'https://developer.smash.gg',
     fbOpenSource: false,
     pinned: false,
@@ -716,7 +772,7 @@ module.exports = [
   },
   {
     caption: 'Stackery',
-    image: 'https://www.stackery.io/img/stackery-large-mark-teal-w.png',
+    image: '/img/users/stackery-large-mark-teal-w.png',
     infoLink: 'https://docs.stackery.io',
     fbOpenSource: false,
     pinned: false,
@@ -758,7 +814,7 @@ module.exports = [
   },
   {
     caption: 'textlint',
-    image: 'https://textlint.github.io/img/textlint-icon.png',
+    image: '/img/users/textlint-icon.png',
     infoLink: 'https://textlint.github.io/',
     fbOpenSource: false,
     pinned: false,
@@ -836,3 +892,13 @@ module.exports = [
 
   // Please add your logo in alphabetical order of caption.
 ];
+
+users.forEach((user) => {
+  if (!user.image || !user.image.startsWith('/img/users/')) {
+    throw new Error(
+      `Bad user site image = ${user.image}. The image should be hosted on Docusaurus site, in /static/img/users/ folder, and not use remote HTTP or HTTPS URLs`,
+    );
+  }
+});
+
+module.exports = users;

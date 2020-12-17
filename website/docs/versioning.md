@@ -1,20 +1,19 @@
 ---
+id: versioning
 title: Versioning
 ---
 
-You can use the version script to cut a new documentation version based on the latest content in the `docs` directory. That specific set of documentation will then be preserved and accessible even as the documentation in the `docs` directory changes moving forward.
+You can use the version script to create a new documentation version based on the latest content in the `docs` directory. That specific set of documentation will then be preserved and accessible even as the documentation in the `docs` directory changes moving forward.
 
-## :warning: Disclaimer
+:::caution
 
-:::important
-
-Consider it really well before starting to version your documentation.
+Think about it before starting to version your documentation - it can become difficult for contributors to help improve it!
 
 :::
 
-Most of the times, you don't need versioning and it will just increase your build time and introduces complexity to your codebase. Versioning is **best suited for website with high-traffic and rapid changes in documentation between version**. If your documentation rarely changes, don't version.
+Most of the time, you don't need versioning as it will just increase your build time, and introduce complexity to your codebase. Versioning is **best suited for websites with high-traffic and rapid changes to documentation between versions**. If your documentation rarely changes, don't add versioning to your documentation.
 
-To better understand how versioning works and see if it suits your needs, you can read up below.
+To better understand how versioning works and see if it suits your needs, you can read on below.
 
 ## Directory structure
 
@@ -62,12 +61,12 @@ npm run docusaurus docs:version 1.1.0
 When tagging a new version, the document versioning mechanism will:
 
 - Copy the full `docs/` folder contents into a new `versioned_docs/version-<version>/` folder.
-- Create a versioned sidebars file based from your current [sidebar](sidebar.md) configuration (if it exists). Saved it as `versioned_sidebars/version-<version>-sidebars.json`.
-- Append the new version number into `versions.json`.
+- Create a versioned sidebars file based from your current [sidebar](docs.md#sidebar) configuration (if it exists) - saved as `versioned_sidebars/version-<version>-sidebars.json`.
+- Append the new version number to `versions.json`.
 
-## Files
+## Docs
 
-### Creating new files
+### Creating new docs
 
 1. Place the new file into the corresponding version folder.
 1. Include the reference for the new file into the corresponding sidebar file, according to version number.
@@ -92,7 +91,7 @@ versioned_docs/version-1.0.0/new.md
 versioned_sidebars/version-1.0.0-sidebars.json
 ```
 
-### Linking files
+### Linking docs
 
 - Remember to include the `.md` extension.
 - Files will be linked to correct corresponding version.
@@ -110,13 +109,13 @@ Each directory in `versioned_docs/` will represent a documentation version.
 
 ### Updating an existing version
 
-You can update multiple docs versions at the same time. Because each directory in `versioned_docs/` represents specific routes when published.
+You can update multiple docs versions at the same time because each directory in `versioned_docs/` represents specific routes when published.
 
 1. Edit any file.
 1. Commit and push changes.
 1. It will be published to the version.
 
-**Example:** When you change any file in `versioned_docs/version-2.6/`, it will only affect the docs for version `2.6`.
+Example: When you change any file in `versioned_docs/version-2.6/`, it will only affect the docs for version `2.6`.
 
 ### Deleting an existing version
 
@@ -139,6 +138,35 @@ Example:
 
 ## Recommended practices
 
+### Figure out the behavior for the "current" version
+
+The "current" version is the version name for the `./docs` folder.
+
+There are different ways to manage versioning, but two very common patterns are:
+
+- You release v1, and start immediately working on v2 (including its docs)
+- You release v1, and will maintain it for some time before thinking about v2.
+
+Docusaurus defaults work great for the first usecase.
+
+**For the 2nd usecase**: if you release v1 and don't plan to work on v2 anytime soon, instead of versioning v1 and having to maintain the docs in 2 folders (`./docs` + `./versioned_docs/version-1.0.0`), you may consider using the following configuration instead:
+
+```json
+{
+  "lastVersion": "current",
+  "versions": {
+    "current": {
+      "label": "1.0.0",
+      "path": "1.0.0"
+    }
+  }
+}
+```
+
+The docs in `./docs` will be served at `/docs/1.0.0` instead of `/docs/next`, and `1.0.0` will become the default version we link to in the navbar dropdown, and you will only need to maintain a single `./docs` folder.
+
+See [docs plugin configuration](./api/plugins/plugin-content-docs.md) for more details.
+
 ### Version your documentation only when needed
 
 For example, you are building a documentation for your npm package `foo` and you are currently in version 1.0.0. You then release a patch version for a minor bug fix and it's now 1.0.1.
@@ -156,4 +184,24 @@ Don't use relative paths import within the docs. Because when we cut a version t
 ```diff
 - import Foo from '../src/components/Foo';
 + import Foo from '@site/src/components/Foo';
+```
+
+### Global or versioned colocated assets
+
+You should decide if assets like images and files are per version or shared between versions
+
+If your assets should be versioned, put them in the docs version, and use relative paths:
+
+```md
+![img alt](./myImage.png)
+
+[download this file](./file.pdf)
+```
+
+If your assets are global, put them in `/static` and use absolute paths:
+
+```md
+![img alt](/myImage.png)
+
+[download this file](/file.pdf)
 ```

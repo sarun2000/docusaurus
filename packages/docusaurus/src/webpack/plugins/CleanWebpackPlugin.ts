@@ -33,6 +33,9 @@ import path from 'path';
 import {sync as delSync} from 'del';
 
 export interface Options {
+  /** @deprecated */
+  allowExternal?: unknown;
+
   /**
    * Simulate the removal of files
    *
@@ -110,7 +113,6 @@ class CleanWebpackPlugin {
             https://github.com/johnagan/clean-webpack-plugin#options-and-defaults-optional`);
     }
 
-    // @ts-ignore
     if (options.allowExternal) {
       throw new Error(
         'clean-webpack-plugin: `allowExternal` option no longer supported. Use `dangerouslyAllowCleanPatternsOutsideProject`',
@@ -180,7 +182,7 @@ class CleanWebpackPlugin {
     this.removeFiles = this.removeFiles.bind(this);
   }
 
-  apply(compiler: Compiler) {
+  apply(compiler: Compiler): void {
     if (!compiler.options.output || !compiler.options.output.path) {
       // eslint-disable-next-line no-console
       console.warn(
@@ -197,7 +199,7 @@ class CleanWebpackPlugin {
      *
      * Check for hooks in-order to support old plugin system
      */
-    const hooks = compiler.hooks;
+    const {hooks} = compiler;
 
     if (this.cleanOnceBeforeBuildPatterns.length !== 0) {
       if (hooks) {
@@ -212,11 +214,11 @@ class CleanWebpackPlugin {
     }
 
     if (hooks) {
-      hooks.done.tap('clean-webpack-plugin', stats => {
+      hooks.done.tap('clean-webpack-plugin', (stats) => {
         this.handleDone(stats);
       });
     } else {
-      compiler.plugin('done', stats => {
+      compiler.plugin('done', (stats) => {
         this.handleDone(stats);
       });
     }
@@ -229,7 +231,7 @@ class CleanWebpackPlugin {
    *
    * Warning: It is recommended to initially clean your build directory outside of webpack to minimize unexpected behavior.
    */
-  handleInitial() {
+  handleInitial(): void {
     if (this.initialClean) {
       return;
     }
@@ -239,7 +241,7 @@ class CleanWebpackPlugin {
     this.removeFiles(this.cleanOnceBeforeBuildPatterns);
   }
 
-  handleDone(stats: Stats) {
+  handleDone(stats: Stats): void {
     /**
      * Do nothing if there is a webpack error
      */
@@ -272,7 +274,7 @@ class CleanWebpackPlugin {
      *
      * (relies on del's cwd: outputPath option)
      */
-    const staleFiles = this.currentAssets.filter(previousAsset => {
+    const staleFiles = this.currentAssets.filter((previousAsset) => {
       const assetCurrent = assets.includes(previousAsset) === false;
 
       return assetCurrent;
@@ -304,7 +306,7 @@ class CleanWebpackPlugin {
     }
   }
 
-  removeFiles(patterns: string[]) {
+  removeFiles(patterns: string[]): void {
     try {
       const deleted = delSync(patterns, {
         force: this.dangerouslyAllowCleanPatternsOutsideProject,
@@ -319,7 +321,7 @@ class CleanWebpackPlugin {
        * Log if verbose is enabled
        */
       if (this.verbose) {
-        deleted.forEach(file => {
+        deleted.forEach((file) => {
           const filename = path.relative(process.cwd(), file);
 
           const message = this.dry ? 'dry' : 'removed';

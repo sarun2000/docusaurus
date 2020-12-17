@@ -6,14 +6,39 @@
  */
 
 import {ThemeAlias} from '@docusaurus/types';
-import {themeAlias} from './alias';
+import themeAlias from './alias';
 
-export function loadThemeAlias(themePaths: string[]): ThemeAlias {
-  return themePaths.reduce(
-    (alias, themePath) => ({
-      ...alias,
-      ...themeAlias(themePath),
-    }),
-    {},
-  );
+function buildThemeAliases(
+  themeAliases: ThemeAlias,
+  aliases: ThemeAlias = {},
+): ThemeAlias {
+  Object.keys(themeAliases).forEach((aliasKey) => {
+    if (aliasKey in aliases) {
+      const componentName = aliasKey.substring(aliasKey.indexOf('/') + 1);
+      // eslint-disable-next-line no-param-reassign
+      aliases[`@theme-init/${componentName}`] = aliases[aliasKey];
+    }
+    // eslint-disable-next-line no-param-reassign
+    aliases[aliasKey] = themeAliases[aliasKey];
+  });
+  return aliases;
+}
+
+export default function loadThemeAlias(
+  themePaths: string[],
+  userThemePaths: string[] = [],
+): ThemeAlias {
+  let aliases = {};
+
+  themePaths.forEach((themePath) => {
+    const themeAliases = themeAlias(themePath, true);
+    aliases = {...aliases, ...buildThemeAliases(themeAliases, aliases)};
+  });
+
+  userThemePaths.forEach((themePath) => {
+    const userThemeAliases = themeAlias(themePath, false);
+    aliases = {...aliases, ...buildThemeAliases(userThemeAliases, aliases)};
+  });
+
+  return aliases;
 }

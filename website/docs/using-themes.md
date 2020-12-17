@@ -5,12 +5,15 @@ title: Themes
 
 Like plugins, themes are designed to add functionality to your Docusaurus site. As a good rule of thumb, themes are mostly focused on client-side, where plugins are more focused on server-side functionalities. Themes are also designed to be replace-able with other themes.
 
+## Available themes
+
+We maintain a [list of official themes](./api/themes/overview.md).
+
 ## Using themes
 
 To use themes, specify the themes in your `docusaurus.config.js`. You may use multiple themes:
 
-```js {4}
-// docusaurus.config.js
+```js {3} title="docusaurus.config.js"
 module.exports = {
   // ...
   themes: ['@docusaurus/theme-classic', '@docusaurus/theme-live-codeblock'],
@@ -52,18 +55,16 @@ website
 
 For example, a Docusaurus blog consists of a blog plugin and a blog theme.
 
-```js
-// docusaurus.config.js
+```js title="docusaurus.config.js"
 {
   theme: ['theme-blog'],
   plugins: ['plugin-content-blog'],
 }
 ```
 
-and if you want to use Bootstrap styling, you can swap out the theme with `theme-blog-bootstrap` (fictitious non-existing theme):
+And if you want to use Bootstrap styling, you can swap out the theme with `theme-blog-bootstrap` (fictitious non-existing theme):
 
-```js
-// docusaurus.config.js
+```js title="docusaurus.config.js"
 {
   theme: ['theme-blog-bootstrap'],
   plugins: ['plugin-content-blog'],
@@ -96,45 +97,65 @@ npm run swizzle @docusaurus/theme-classic Footer
 
 This will copy the current `<Footer />` component used by the theme to a `src/theme/Footer` directory under the root of your site, which is where Docusaurus will look for swizzled components. Docusaurus will then use swizzled component in place of the original one from the theme.
 
-**Note**: You need to restart your dev server for Docusaurus to pick up the new component.
-
-## Official themes by Docusaurus
-
-### `@docusaurus/theme-classic`
-
-The classic theme for Docusaurus. You can refer to [classic theme configuration](theme-classic.md) for more details on the configuration.
+Although we highly discourage swizzling of all components, if you wish to do that, run:
 
 ```bash npm2yarn
-npm install --save @docusaurus/theme-classic
+npm run swizzle @docusaurus/theme-classic
 ```
 
-:::tip
+**Note**: You need to restart your webpack dev server in order for Docusaurus to know about the new component.
 
-If you have installed `@docusaurus/preset-classic`, you don't need to install it as a dependency.
+## Wrapping theme components
+
+Sometimes, you just want to wrap an existing theme component with additional logic, and it can be a pain to have to maintain an almost duplicate copy of the original theme component.
+
+In such case, you should swizzle the component you want to wrap, but import the original theme component in your customized version to wrap it.
+
+### For site owners
+
+The `@theme-original` alias allows you to import the original theme component.
+
+Here is an example to display some text just above the footer, with minimal code duplication.
+
+```js title="src/theme/Footer.js"
+// Note: importing from "@theme/Footer" would fail due to the file importing itself
+import OriginalFooter from '@theme-original/Footer';
+
+export default function Footer(props) {
+  return (
+    <>
+      <div>Before footer</div>
+      <OriginalFooter {...props} />
+    </>
+  );
+}
+```
+
+### For plugin authors
+
+One theme can wrap a component from another theme, by importing the component from the initial theme, using the `@theme-init` import.
+
+Here's an example of using this feature to enhance the default theme `CodeBlock` component with a `react-live` playground feature.
+
+```js
+import InitialCodeBlock from '@theme-init/CodeBlock';
+
+export default function CodeBlock(props) {
+  return props.live ? (
+    <ReactLivePlayground {...props} />
+  ) : (
+    <InitialCodeBlock {...props} />
+  );
+}
+```
+
+Check the code of `docusaurus-theme-live-codeblock` for details.
+
+:::caution
+
+Unless you want publish to npm a "theme enhancer" (like `docusaurus-theme-live-codeblock`), you likely don't need `@theme-init`.
 
 :::
-
-### `@docusaurus/theme-search-algolia`
-
-This theme provides a `@theme/SearchBar` component that integrates with Algolia DocSearch easily. Combined with `@docusaurus/theme-classic`, it provides a very easy search integration. You can read more on [search](search.md) documentation.
-
-```bash npm2yarn
-npm install --save @docusaurus/theme-search-algolia
-```
-
-:::tip
-
-If you have installed `@docusaurus/preset-classic`, you don't need to install it as a dependency.
-
-:::
-
-### `@docusaurus/theme-live-codeblock`
-
-This theme provides a `@theme/CodeBlock` component that is powered by react-live. You can read more on [interactive code editor](markdown-features.mdx#interactive-code-editor) documentation.
-
-```bash npm2yarn
-npm install --save @docusaurus/theme-live-codeblock
-```
 
 ## Themes design
 
@@ -164,8 +185,13 @@ website
 
 There are two lifecycle methods that are essential to theme implementation:
 
-- [getThemePath](lifecycle-apis.md#getthemepath)
-- [getClientModules](lifecycle-apis.md#getclientmodules)
+- [`getThemePath()`](lifecycle-apis.md#getthemepath)
+- [`getClientModules()`](lifecycle-apis.md#getclientmodules)
+
+These lifecycle method are not essential but recommended:
+
+- [`validateThemeConfig({themeConfig, validate})`](lifecycle-apis.md#validatethemeconfigthemeconfig-validate)
+- [`validateOptions({options, validate})`](lifecycle-apis.md#validateoptionsoptions-validate)
 
 <!--
 
@@ -179,7 +205,7 @@ High-level overview about themes:
 Related pieces
 ---
 
-- [Advanced Guides – Themes](advanced-themes.md)
+- [Advanced Guides – Themes](using-themes.md)
 - [Lifecycle APIs](lifecycle-apis.md)
 
 References

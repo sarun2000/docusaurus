@@ -7,31 +7,34 @@
 
 module.exports = `
 <!DOCTYPE html>
-<html <%- htmlAttributes %>>
+<html <%~ it.htmlAttributes %>>
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <meta name="generator" content="Docusaurus">
-    <%- headTags %>
-    <% metaAttributes.forEach((metaAttribute) => { %>
-      <%- metaAttribute %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Docusaurus v<%= it.version %>">
+    <% if (it.noIndex) { %>
+      <meta name="robots" content="noindex, nofollow" />
+    <% } %>
+    <%~ it.headTags %>
+    <% it.metaAttributes.forEach((metaAttribute) => { %>
+      <%~ metaAttribute %>
     <% }); %>
-    <% stylesheets.forEach((stylesheet) => { %>
-      <link rel="stylesheet" type="text/css" href="<%= baseUrl %><%= stylesheet %>" />
+    <% it.stylesheets.forEach((stylesheet) => { %>
+      <link rel="stylesheet" type="text/css" href="<%= it.baseUrl %><%= stylesheet %>" />
     <% }); %>
-    <% scripts.forEach((script) => { %>
-      <link rel="preload" href="<%= baseUrl %><%= script %>" as="script">
+    <% it.scripts.forEach((script) => { %>
+      <link rel="preload" href="<%= it.baseUrl %><%= script %>" as="script">
     <% }); %>
   </head>
-  <body <%- bodyAttributes %>>
-    <%- preBodyTags %>
+  <body <%~ it.bodyAttributes %>>
+    <%~ it.preBodyTags %>
     <div id="__docusaurus">
-      <%- appHtml %>
+      <%~ it.appHtml %>
     </div>
-    <% scripts.forEach((script) => { %>
-      <script type="text/javascript" src="<%= baseUrl %><%= script %>"></script>
+    <% it.scripts.forEach((script) => { %>
+      <script type="text/javascript" src="<%= it.baseUrl %><%= script %>"></script>
     <% }); %>
-    <%- postBodyTags %>
+    <%~ it.postBodyTags %>
   </body>
 </html>
 `;

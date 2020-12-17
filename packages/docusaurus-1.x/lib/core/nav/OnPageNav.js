@@ -23,7 +23,7 @@ const Headings = ({headings}) => {
   if (!headings.length) return null;
   return (
     <ul className="toc-headings">
-      {headings.map(heading => (
+      {headings.map((heading) => (
         <li key={heading.hashLink}>
           <Link hashLink={heading.hashLink} content={heading.content} />
           <Headings headings={heading.children} />
@@ -37,8 +37,18 @@ class OnPageNav extends React.Component {
   render() {
     const customTags = siteConfig.onPageNavHeadings;
     const headings = customTags
-      ? getTOC(this.props.rawContent, customTags.topLevel, customTags.sub)
-      : getTOC(this.props.rawContent);
+      ? getTOC(
+          this.props.rawContent,
+          customTags.topLevel,
+          customTags.sub,
+          siteConfig.slugPreprocessor,
+        )
+      : getTOC(
+          this.props.rawContent,
+          undefined,
+          undefined,
+          siteConfig.slugPreprocessor,
+        );
 
     return <Headings headings={headings} />;
   }

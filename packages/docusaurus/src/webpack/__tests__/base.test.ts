@@ -7,7 +7,14 @@
 
 import path from 'path';
 
-import {excludeJS, clientDir} from '../base';
+import {
+  excludeJS,
+  clientDir,
+  getDocusaurusAliases,
+  createBaseConfig,
+} from '../base';
+import * as utils from '../utils';
+import {mapValues} from 'lodash';
 
 describe('babel transpilation exclude logic', () => {
   test('always transpile client dir files', () => {
@@ -17,7 +24,7 @@ describe('babel transpilation exclude logic', () => {
       'serverEntry.js',
       path.join('exports', 'Link.js'),
     ];
-    clientFiles.forEach(file => {
+    clientFiles.forEach((file) => {
       expect(excludeJS(path.join(clientDir, file))).toEqual(false);
     });
   });
@@ -28,7 +35,7 @@ describe('babel transpilation exclude logic', () => {
       '/website/src/components/foo.js',
       '/src/theme/SearchBar/index.js',
     ];
-    moduleFiles.forEach(file => {
+    moduleFiles.forEach((file) => {
       expect(excludeJS(file)).toEqual(false);
     });
   });
@@ -39,7 +46,7 @@ describe('babel transpilation exclude logic', () => {
       'node_modules/@docusaurus/theme-classic/theme/Layout.js',
       '/docusaurus/website/node_modules/@docusaurus/theme-search-algolia/theme/SearchBar.js',
     ];
-    moduleFiles.forEach(file => {
+    moduleFiles.forEach((file) => {
       expect(excludeJS(file)).toEqual(false);
     });
   });
@@ -52,8 +59,44 @@ describe('babel transpilation exclude logic', () => {
       '/docusaurus/website/node_modules/@docusaurus/core/node_modules/core-js/modules/_descriptors.js',
       'node_modules/docusaurus-theme-classic/node_modules/react-daypicker/index.js',
     ];
-    moduleFiles.forEach(file => {
+    moduleFiles.forEach((file) => {
       expect(excludeJS(file)).toEqual(true);
     });
+  });
+});
+
+describe('getDocusaurusAliases()', () => {
+  test('return appropriate webpack aliases', () => {
+    // using relative paths makes tests work everywhere
+    const relativeDocusaurusAliases = mapValues(
+      getDocusaurusAliases(),
+      (aliasValue) => path.relative(__dirname, aliasValue),
+    );
+    expect(relativeDocusaurusAliases).toMatchSnapshot();
+  });
+});
+
+describe('base webpack config', () => {
+  const props = {
+    outDir: '',
+    siteDir: '',
+    baseUrl: '',
+    generatedFilesDir: '',
+    routesPaths: '',
+  };
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('should use svg rule', () => {
+    const fileLoaderUtils = utils.getFileLoaderUtils();
+    const mockSvg = jest.spyOn(fileLoaderUtils.rules, 'svg');
+    jest
+      .spyOn(utils, 'getFileLoaderUtils')
+      .mockImplementation(() => fileLoaderUtils);
+
+    createBaseConfig(props, false, false);
+    expect(mockSvg).toBeCalled();
   });
 });

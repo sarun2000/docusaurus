@@ -102,14 +102,14 @@ class MarkdownRenderer {
     const md = new Markdown(markdownOptions);
 
     // Register anchors plugin
-    md.use(anchors);
+    md.use(anchors, siteConfig.slugPreprocessor);
 
     // Linkify
     md.use(linkify);
 
     // Allow client sites to register their own plugins
     if (siteConfig.markdownPlugins) {
-      siteConfig.markdownPlugins.forEach(plugin => {
+      siteConfig.markdownPlugins.forEach((plugin) => {
         md.use(plugin);
       });
     }
@@ -128,4 +128,4 @@ class MarkdownRenderer {
 
 const renderMarkdown = new MarkdownRenderer();
 
-module.exports = source => renderMarkdown.toHtml(source);
+module.exports = (source) => renderMarkdown.toHtml(source);

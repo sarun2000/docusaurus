@@ -10,88 +10,145 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import fs from 'fs-extra';
 import path from 'path';
 import ReactLoadableSSRAddon from 'react-loadable-ssr-addon';
-import webpack, {Configuration, Plugin} from 'webpack';
+import {Configuration, Plugin} from 'webpack';
 import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import {STATIC_DIR_NAME} from '../constants';
 import {load} from '../server';
+import {handleBrokenLinks} from '../server/brokenLinks';
+
 import {BuildCLIOptions, Props} from '@docusaurus/types';
-import {createClientConfig} from '../webpack/client';
-import {createServerConfig} from '../webpack/server';
-import {applyConfigureWebpack} from '../webpack/utils';
+import createClientConfig from '../webpack/client';
+import createServerConfig from '../webpack/server';
+import {compile, applyConfigureWebpack} from '../webpack/utils';
 import CleanWebpackPlugin from '../webpack/plugins/CleanWebpackPlugin';
+import {loadI18n} from '../server/i18n';
+import {mapAsyncSequencial} from '@docusaurus/utils';
+import loadConfig from '../server/config';
 
-function compile(config: Configuration[]): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const compiler = webpack(config);
-    compiler.run((err, stats) => {
-      if (err) {
-        reject(err);
-      }
-      if (stats.hasErrors()) {
-        stats.toJson('errors-only').errors.forEach(e => {
-          console.error(e);
-        });
-        reject(new Error('Failed to compile with errors.'));
-      }
-      if (stats.hasWarnings()) {
-        stats.toJson('errors-warnings').warnings.forEach(warning => {
-          console.warn(warning);
-        });
-      }
-      resolve();
-    });
-  });
-}
-
-export async function build(
+export default async function build(
   siteDir: string,
   cliOptions: Partial<BuildCLIOptions> = {},
-): Promise<void> {
+  forceTerminate: boolean = true,
+): Promise<string> {
+  async function tryToBuildLocale(locale: string, forceTerm) {
+    try {
+      const result = await buildLocale(siteDir, locale, cliOptions, forceTerm);
+      console.log(chalk.green(`Site successfully built in locale=${locale}`));
+      return result;
+    } catch (e) {
+      console.error(`error building locale=${locale}`);
+      throw e;
+    }
+  }
+
+  const i18n = await loadI18n(loadConfig(siteDir), {
+    locale: cliOptions.locale,
+  });
+  if (cliOptions.locale) {
+    return tryToBuildLocale(cliOptions.locale, forceTerminate);
+  } else {
+    if (i18n.locales.length > 1) {
+      console.log(
+        chalk.yellow(
+          `\nSite will be built with all these locales:
+- ${i18n.locales.join('\n- ')}\n`,
+        ),
+      );
+    }
+
+    // We need the default locale to always be the 1st in the list
+    // If we build it last, it would "erase" the localized sites built in subfolders
+    const orderedLocales: string[] = [
+      i18n.defaultLocale,
+      ...i18n.locales.filter((locale) => locale !== i18n.defaultLocale),
+    ];
+
+    const results = await mapAsyncSequencial(orderedLocales, (locale) => {
+      const isLastLocale =
+        i18n.locales.indexOf(locale) === i18n.locales.length - 1;
+      // TODO check why we need forceTerminate
+      const forceTerm = isLastLocale && forceTerminate;
+      return tryToBuildLocale(locale, forceTerm);
+    });
+    return results[0]!;
+  }
+}
+
+async function buildLocale(
+  siteDir: string,
+  locale: string,
+  cliOptions: Partial<BuildCLIOptions> = {},
+  forceTerminate: boolean = true,
+): Promise<string> {
   process.env.BABEL_ENV = 'production';
   process.env.NODE_ENV = 'production';
-  console.log(chalk.blue('Creating an optimized production build...'));
+  console.log(
+    chalk.blue(`[${locale}] Creating an optimized production build...`),
+  );
 
-  const props: Props = await load(siteDir);
+  const props: Props = await load(siteDir, {
+    customOutDir: cliOptions.outDir,
+    locale,
+    localizePath: cliOptions.locale ? false : undefined,
+  });
 
   // Apply user webpack config.
-  const {outDir, generatedFilesDir, plugins} = props;
+  const {
+    outDir,
+    generatedFilesDir,
+    plugins,
+    siteConfig: {baseUrl, onBrokenLinks},
+    routes,
+  } = props;
 
   const clientManifestPath = path.join(
     generatedFilesDir,
     'client-manifest.json',
   );
-  let clientConfig: Configuration = merge(createClientConfig(props), {
-    plugins: [
-      // Remove/clean build folders before building bundles.
-      new CleanWebpackPlugin({verbose: false}),
-      // Visualize size of webpack output files with an interactive zoomable treemap.
-      cliOptions.bundleAnalyzer && new BundleAnalyzerPlugin(),
-      // Generate client manifests file that will be used for server bundle.
-      new ReactLoadableSSRAddon({
-        filename: clientManifestPath,
-      }),
-    ].filter(Boolean) as Plugin[],
-  });
+  let clientConfig: Configuration = merge(
+    createClientConfig(props, cliOptions.minify),
+    {
+      plugins: [
+        // Remove/clean build folders before building bundles.
+        new CleanWebpackPlugin({verbose: false}),
+        // Visualize size of webpack output files with an interactive zoomable treemap.
+        cliOptions.bundleAnalyzer && new BundleAnalyzerPlugin(),
+        // Generate client manifests file that will be used for server bundle.
+        new ReactLoadableSSRAddon({
+          filename: clientManifestPath,
+        }),
+      ].filter(Boolean) as Plugin[],
+    },
+  );
 
-  let serverConfig: Configuration = createServerConfig(props);
+  const allCollectedLinks: Record<string, string[]> = {};
+
+  let serverConfig: Configuration = createServerConfig({
+    props,
+    onLinksCollected: (staticPagePath, links) => {
+      allCollectedLinks[staticPagePath] = links;
+    },
+  });
 
   const staticDir = path.resolve(siteDir, STATIC_DIR_NAME);
   if (fs.existsSync(staticDir)) {
     serverConfig = merge(serverConfig, {
       plugins: [
-        new CopyWebpackPlugin([
-          {
-            from: staticDir,
-            to: outDir,
-          },
-        ]),
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: staticDir,
+              to: outDir,
+            },
+          ],
+        }),
       ],
     });
   }
 
   // Plugin Lifecycle - configureWebpack.
-  plugins.forEach(plugin => {
+  plugins.forEach((plugin) => {
     const {configureWebpack} = plugin;
     if (!configureWebpack) {
       return;
@@ -126,14 +183,16 @@ export async function build(
     typeof serverConfig.output.filename === 'string'
   ) {
     const serverBundle = path.join(outDir, serverConfig.output.filename);
-    fs.pathExists(serverBundle).then(exist => {
-      exist && fs.unlink(serverBundle);
+    fs.pathExists(serverBundle).then((exist) => {
+      if (exist) {
+        fs.unlink(serverBundle);
+      }
     });
   }
 
   // Plugin Lifecycle - postBuild.
   await Promise.all(
-    plugins.map(async plugin => {
+    plugins.map(async (plugin) => {
       if (!plugin.postBuild) {
         return;
       }
@@ -141,10 +200,25 @@ export async function build(
     }),
   );
 
+  await handleBrokenLinks({
+    allCollectedLinks,
+    routes,
+    onBrokenLinks,
+    outDir,
+    baseUrl,
+  });
+
   const relativeDir = path.relative(process.cwd(), outDir);
   console.log(
     `\n${chalk.green('Success!')} Generated static files in ${chalk.cyan(
       relativeDir,
-    )}.\n`,
+    )}. Use ${chalk.greenBright(
+      '`npm run serve`',
+    )} to test your build locally.\n`,
   );
+  if (forceTerminate && !cliOptions.bundleAnalyzer) {
+    process.exit(0);
+  }
+
+  return outDir;
 }

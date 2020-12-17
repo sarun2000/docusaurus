@@ -1,12 +1,15 @@
 ---
-id: sidebar
+id: docs-sidebar
 title: Sidebar
+slug: /sidebar
 ---
 
-To generate a sidebar to your Docusaurus site, you need to define a file that exports a sidebar object and pass that into the `@docusaurus/plugin-docs` plugin directly or via `@docusaurus/preset-classic`.
+To generate a sidebar to your Docusaurus site:
 
-```js {9-10}
-// docusaurus.config.js
+1. Define a file that exports a [sidebar object](#sidebar-object).
+1. Pass this object into the `@docusaurus/plugin-docs` plugin directly or via `@docusaurus/preset-classic`.
+
+```js {8-9} title="docusaurus.config.js"
 module.exports = {
   // ...
   presets: [
@@ -17,7 +20,7 @@ module.exports = {
           // Sidebars filepath relative to the site dir.
           sidebarPath: require.resolve('./sidebars.js'),
         },
-        ...
+        // ...
       },
     ],
   ],
@@ -26,7 +29,7 @@ module.exports = {
 
 ## Sidebar object
 
-A sidebar object is defined like this.
+A sidebar object contains [sidebar items](#understanding-sidebar-items) and it is defined like this:
 
 ```typescript
 type Sidebar = {
@@ -38,22 +41,9 @@ type Sidebar = {
 };
 ```
 
-Below is an example of a sidebar object. The key `docs` is the id of the sidebar (can be renamed to something else) and `Getting Started` is a category within the sidebar. `greeting` and `doc1` are both [sidebar item](#sidebar-item).
+For example:
 
-```js
-// sidebars.js
-module.exports = {
-  docs: {
-    'Getting started': ['greeting'],
-    Docusaurus: ['doc1'],
-  },
-};
-```
-
-If you don't want to rely on iteration order of JavaScript object keys for the category name, the following sidebar object is also equivalent of the above.
-
-```js
-// sidebars.js
+```js title="sidebars.js"
 module.exports = {
   docs: [
     {
@@ -70,12 +60,34 @@ module.exports = {
 };
 ```
 
-You can also have multiple sidebars for different Markdown files by adding more top-level keys to the exported object.
+In this example, notice the following:
+
+- The key `docs` is the id of the sidebar. The id can be any value, not necessarily `docs`.
+- `Getting Started` is a category within the sidebar.
+- `greeting` and `doc1` are both [sidebar item](#sidebar-item).
+
+Shorthand notation can also be used:
+
+```js title="sidebars.js"
+module.exports = {
+  docs: {
+    'Getting started': ['greeting'],
+    Docusaurus: ['doc1'],
+  },
+};
+```
+
+:::note
+Shorthand notation relies on the iteration order of JavaScript object keys for the category name. When using this notation, keep in mind that EcmaScript does not guarantee `Object.keys({a,b}) === ['a','b']`, yet this is generally true.
+:::
+
+## Using multiple sidebars
+
+You can have multiple sidebars for different Markdown files by adding more top-level keys to the exported object.
 
 Example:
 
-```js
-// sidebars.js
+```js title="sidebars.js"
 module.exports = {
   firstSidebar: {
     'Category A': ['doc1'],
@@ -87,39 +99,26 @@ module.exports = {
 };
 ```
 
-## Document ID
+By default, the doc page the user is reading will display the sidebar that it is part of. This can be customized with the [sidebar type](#understanding-sidebar-items).
 
-Every document has a unique `id`. By default, a document `id` is the name of the document (without the extension) relative to the root docs directory.
+For example, with the above example, when displaying the `doc2` page, the sidebar will contain the items of `secondSidebar` only. Another example of multiple sidebars is the `API` and `Docs` sections on the Docusaurus website.
 
-For example, `greeting.md` id is `greeting` and `guide/hello.md` id is `guide/hello`.
+For more information about sidebars and how they relate to doc pages, see [Navbar doc link](./api/themes/theme-configuration.md#navbar-doc-link).
 
-```bash
-website # root directory of your site
-└── docs
-   ├── greeting.md
-   └── guide
-      └── hello.md
-```
+## Understanding sidebar items
 
-However, the last part of the `id` can be defined by user in the frontmatter. For example, if `guide/hello.md` content is defined as below, it's final `id` is `guide/part1`.
+As the name implies, `SidebarItem` is an item defined in a Sidebar. A sibarItem as a `type` that defines what the item links to.
 
-```yml
----
-id: part1
----
-Lorem ipsum
-```
+`type` supports the following values
 
-## Sidebar item
+- [Doc](#linking-to-a-doc-page)
+- [Link](#creating-a-generic-link)
+- [Ref](#creating-a-link-to-page-without-sidebar)
+- [Category](#creating-a-hierachy)
 
-As the name implies, `SidebarItem` is an item defined in a Sidebar. There are a few types we support:
+### Linking to a doc page
 
-- [Doc](#doc)
-- [Link](#link)
-- [Ref](#ref)
-- [Category](#category)
-
-### Doc
+Set `type` to `doc` to link to a documentation page. This is the default type.
 
 ```typescript
 type SidebarItemDoc =
@@ -130,7 +129,7 @@ type SidebarItemDoc =
     };
 ```
 
-Sidebar item type that links to a doc page. Example:
+Example:
 
 ```js
 {
@@ -139,16 +138,17 @@ Sidebar item type that links to a doc page. Example:
 }
 ```
 
-Using just the [Document ID](#document-id) is perfectly valid as well, the following is equivalent to the above:
+Using just the [Document ID](#document-id) is also valid, the following is equivalent to the above:
 
 ```js
 'doc1'; // string - document id
 ```
 
-Note that using this type will bind the linked doc to current sidebar, this means that if you access `doc1` page, the sidebar displayed will be the sidebar this item is on. For below case, `doc1` is bounded to `firstSidebar`.
+Using this type will bind the linked doc to current sidebar. This means that if you access the `doc1` page, the sidebar displayed will be the sidebar that contains this doc page.
 
-```js
-// sidebars.js
+In the example below, `doc1` is bound to `firstSidebar`.
+
+```js title="sidebars.js"
 module.exports = {
   firstSidebar: {
     'Category A': ['doc1'],
@@ -160,7 +160,9 @@ module.exports = {
 };
 ```
 
-### Link
+### Creating a generic link
+
+Set `type` to `link` to link to a non-documentation page. For example, to create an external link.
 
 ```typescript
 type SidebarItemLink = {
@@ -170,17 +172,19 @@ type SidebarItemLink = {
 };
 ```
 
-Sidebar item type that links to a non-document page. Example:
+Example:
 
 ```js
 {
   type: 'link',
-  label: 'Custom Label', // string - the label that should be displayed.
-  href: 'https://example.com' // string - the target URL.
+  label: 'Custom Label', // The label that should be displayed (string).
+  href: 'https://example.com' // The target URL (string).
 }
 ```
 
-### Ref
+### Creating a link to page without sidebar
+
+Set `type` to `ref` to link to a documentation page without binding it to a sidebar. This means the sidebar dissapears when the user displays the linked page.
 
 ```typescript
 type SidebarItemRef = {
@@ -189,31 +193,88 @@ type SidebarItemRef = {
 };
 ```
 
-Sidebar item type that links to doc without bounding it to the sidebar. Example:
+Example:
 
 ```js
 {
   type: 'ref',
-  id: 'doc1', // string - document id
+  id: 'doc1', // Document id (string).
 }
 ```
 
-### Category
+### Creating a hierachy
 
-This is used to add hierarchies to the sidebar:
+The Sidebar item type that creates a hierarchy in the sidebar. Set `type` to `category`.
 
 ```typescript
 type SidebarItemCategory = {
   type: 'category';
   label: string; // Sidebar label text.
   items: SidebarItem[]; // Array of sidebar items.
+  collapsed: boolean; // Set the category to be collapsed or open by default
 };
 ```
 
-As an example, here's how we created the subcategory for "Docs" under "Guides" in this site:
+Example:
 
-```js
-// sidebars.js
+```js title="sidebars.js"
+module.exports = {
+  docs: [
+    {
+      ...
+    },
+    {
+      type: 'category',
+      label: 'Guides',
+      items: [
+        'guides/creating-pages',
+        {
+          Docs: ['docs-introduction', 'docs-sidebar', 'markdown-features', 'versioning'],
+        },
+      ],
+    },
+};
+```
+
+**Note**: it's possible to use the shorthand syntax to create nested categories:
+
+```js title="sidebars.js"
+module.exports = {
+  docs: {
+    Guides: [
+      'creating-pages',
+      {
+        Docs: [
+          'docs-introduction',
+          'docs-sidebar',
+          'markdown-features',
+          'versioning',
+        ],
+      },
+    ],
+  },
+};
+```
+
+#### Collapsible categories
+
+For sites with a sizable amount of content, we support the option to expand/collapse a category to toggle the display of its contents. Categories are collapsible by default. If you want them to be always expanded, set `themeConfig.sidebarCollapsible` to `false`:
+
+```js {4} title="docusaurus.config.js"
+module.exports = {
+  // ...
+  themeConfig: {
+    sidebarCollapsible: false,
+    // ...
+  },
+};
+```
+
+#### Expanded categories by default
+
+For docs that have collapsible categories, you may want more fine-grain control over certain categories. If you want specific categories to be always expanded, you can set `collapsed` to `false`:
+
+```js title="sidebars.js"
 module.exports = {
   docs: {
     Guides: [
@@ -221,24 +282,38 @@ module.exports = {
       {
         type: 'category',
         label: 'Docs',
-        items: ['markdown-features', 'sidebar'],
+        collapsed: false,
+        items: ['markdown-features', 'sidebar', 'versioning'],
       },
     ],
   },
 };
 ```
 
-### Collapsible categories
+## Hideable sidebar
 
-For sites with a sizable amount of content, we support the option to expand/collapse a category to toggle the display of its contents. Categories are collapsible by default. If you want them to be always expanded, set `themeConfig.sidebarCollapsible` to `false`:
+Using the enabled `themeConfig.hideableSidebar` option, you can make the entire sidebar hidden, allowing you to better focus your users on the content. This is especially useful when content consumption on medium screens (e.g. on tablets).
 
-```js {5}
-// docusaurus.config.js
+```js {4} title="docusaurus.config.js"
 module.exports = {
-  ...
+  // ...
   themeConfig: {
-    sidebarCollapsible: false,
-    ...
+    hideableSidebar: true,
+    // ...
   },
+};
+```
+
+## Passing custom props
+
+To pass in custom props to a swizzled sidebar item, add the optional `customProps` object to any of the items:
+
+```js
+{
+  type: 'doc';
+  id: 'doc1';
+  customProps: {
+    /* props */
+  }
 }
 ```
